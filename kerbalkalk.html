@@ -1,0 +1,229 @@
+<html>
+<head>
+<style>
+	input { font-family: monospace; }
+</style>
+</head>
+<body>
+<h1>Kerbal Kalkulator</h1>
+
+<table>
+<tr><td>Primary Body</td><td>
+<select id='primarybody'>
+	<option disabled><hr></option>
+	<option value='kerbin'>Kerbin</option>
+	<option value='mun'> - Mun</option>
+	<option value='minmus'> - Minmus</option>
+	<option disabled><hr></option>
+	<option value='duna'>Duna</option>
+</select>
+</td></tr>
+
+<tr><td>Ship's Mass</td><td><input type='number' id='shipmass' value='0'> tn</td></tr>
+
+<tr><td>Apoapsis</td><td><input type='number' id='apoapsis' value='0'> m</td></tr>
+
+<tr><td>Periapsis</td><td><input type='number' id='periapsis' value='0'> m</td></tr>
+
+<tr><td>Inclination</td><td><input type='number' id='inclination_deg' value='0' min='-360' max='360'> degrees</td></tr>
+
+<tr><td>Eccentricity</td><td><input readonly disabled id='eccentricity' value='N/A'></td></tr>
+
+<tr><td>Semi-major Axis</td><td><input readonly disabled id='semimajoraxis' value='N/A'> m</td></tr>
+
+<tr><td>Orbital Period</td><td><input readonly disabled id='orbitalperiod' value='N/A'></td></tr>
+
+<tr><td>Angular Momentum <br><small>at Periapsis</small></td><td><input readonly disabled id='angularmomentumatperiapsis' value='N/A'> kg·m<sup>2</sup>s<sup>-1</sup></td></tr>
+
+</table>
+
+<div>
+<h3>Orbital Period Checker</h3>
+<table>
+<tr><td>Observed Period</td><td><input type='number' id='observedperiod' value='0'> s</td></tr>
+<tr><td>Official Grav Parameter</td><td><input readonly disabled id='bodymu' value='N/A'> m<sup>3</sup>s<sup>-2</sup></td></tr>
+<tr><td>Observed Grav Parameter</td><td><input readonly disabled id='observedmu' value='N/A'> m<sup>3</sup>s<sup>-2</sup></td></tr>
+</table>
+</div>
+
+<div>
+<h3>Orbital Phasing</h3>
+<table>
+<tr><td>Desired Phase Angle</td><td><input type='number' id='phaseangle_deg' value='0' min='-180' max='180'> degrees</td></tr>
+<tr><td>as Eccentric Anomaly</td><td><input readonly disabled id='phaseeccentricanomaly' value='N/A'></td></tr>
+<tr><td>as Timespam</td><td><input readonly disabled id='phasetimespam' value='N/A'></td></tr>
+<tr><td>Period (phasing orbit)</td><td><input readonly disabled id='phaseperiod' value='N/A'></td></tr>
+<tr><td>Semi-major Axis (phasing orbit)</td><td><input readonly disabled id='phasesemimajor' value='N/A'> m</td></tr>
+<tr><td>Apoapsis (phasing orbit)</td><td><input readonly disabled id='phaseapoapsis' value='N/A'> m</td></tr>
+<tr><td>Angular Momentum (phasing orbit)</td><td><input readonly disabled id='phaseangularmomentum' value='N/A'> kg·m<sup>2</sup>s<sup>-1</sup></td></tr>
+<tr><td>∆V (entering phasing orbit)</td><td><input readonly disabled id='phase∆Ventering' value='N/A'> ms<sup>-1</sup></td></tr>
+<tr><td>∆V (leaving phasing orbit)</td><td><input readonly disabled id='phase∆Vleaving' value='N/A'> ms<sup>-1</sup></td></tr>
+</table>
+</div>
+
+
+
+<script>
+window.bodies = {
+	'kerbin': {
+		'orbits': 'kerbol',			// planet
+		'periapsis': 13599840256,	// m
+		'apoapsis': 13599840256,	// m
+		'inclination': 0,			// degrees
+		'arg_of_periapsis': 0,		// degrees
+		'long_of_ascent': 0,		// degrees
+		'equator_radius': 600000,	// m
+		'mass': 5.2915158e22,		// kg
+		'mu': 3.5316e12,			// m^3/s^2
+		'density': 58484090,		// kg/m^3
+		'surface_gravity': 9.81,	// m/s^2
+		'day_length': 21600,		// s
+		'soi_distance': 8415986,	// m
+		'atmospheric_pressure': 1,	// atm
+		'atmos_height': 70000,		// m
+	},
+	'mun': {
+		'orbits': 'kerbin',			// planet
+		'periapsis': 12000000,		// m
+		'apoapsis': 12000000,		// m
+		'inclination': 0,			// degrees
+		'arg_of_periapsis': 0,		// degrees
+		'long_of_ascent': 0,		// degrees
+		'equator_radius': 200000,	// m
+		'mass': 9.7599066e20,		// kg
+		'mu': 6.5138398e10,			// m^3/s^2
+		'density': 29125.076,		// kg/m^3
+		'surface_gravity': 1.63,	// m/s^2
+		'soi_distance': 2429559.1,	// m
+		'atmospheric_pressure': 0,	// atm
+	},
+	'minmus': {
+		'orbits': 'kerbin',			// planet
+		'periapsis': 47000000,	// m
+		'apoapsis': 47000000,	// m
+		'inclination': 6,			// degrees
+		'arg_of_periapsis': 38,		// degrees
+		'long_of_ascent': 78,		// degrees
+		'equator_radius': 60000,	// m
+		'mass': 2.6457580e19,		// kg
+		'mu': 1.7658e9,			// m^3/s^2
+		'density': 29242.046,		// kg/m^3
+		'surface_gravity': 0.491,	// m/s^2
+		'soi_distance': 2247428.4,	// m
+		'atmospheric_pressure': 0,	// atm
+	},
+	'duna': {
+		'orbits': 'kerbol',			// planet
+		'periapsis': 19669121365,	// m
+		'apoapsis': 21783189163,	// m
+		'inclination': 0.06,			// degrees
+		'arg_of_periapsis': 0,		// degrees
+		'long_of_ascent': 135.5,		// degrees
+		'equator_radius': 320000,	// m
+		'mass': 4.515427e21,		// kg
+		'mu': 3.0136321e11,			// m^3/s^2
+		'density': 32897.302,		// kg/m^3
+		'surface_gravity': 2.94,	// m/s^2
+		'day_length': 65766.707,	// s
+		'soi_distance': 47921949,	// m
+		'atmospheric_pressure': 0.06666667,	// atm
+		'atmos_height': 50000,		// m
+	},
+}
+
+window.secondsAsHumanTime = function(secs) {
+	let returnString = "";
+	secs = Math.trunc(secs);
+
+	const days = Math.trunc(secs / (60*60*6));
+	if (days != 0) {
+		secs = secs % (60*60*6);
+		returnString += (days + "d ");
+	}
+
+	const hours = Math.trunc(secs / (60*60));
+	if (hours != 0) {
+		secs = secs % (60*60);
+		returnString += (hours + "h ");
+	}
+
+	const minutes = Math.trunc(secs / 60);
+	if (minutes != 0) {
+		secs = secs % 60;
+		returnString += (minutes + "m ");
+	}
+
+	returnString += (Math.trunc(secs) + "s");
+
+	return returnString;
+}
+
+window.updateReadOnlyFields = function() {
+	const bodyname = document.getElementById('primarybody').value;
+	if (!window.bodies.hasOwnProperty(bodyname)) {
+		document.getElementById('orbitalperiod').value = 'N/A';
+		document.getElementById('bodymu').value = 'N/A';
+		return;
+	}
+	const body = window.bodies[bodyname];
+
+	const apoapsis = Number.parseInt(document.getElementById('apoapsis').value) + body.equator_radius;
+	const periapsis = Number.parseInt(document.getElementById('periapsis').value) + body.equator_radius;
+	const inclination_deg = Number.parseInt(document.getElementById('inclination_deg').value);
+	const observedperiod = Number.parseInt(document.getElementById('observedperiod').value);
+	const phaseangle_deg = Number.parseInt(document.getElementById('phaseangle_deg').value);
+
+	// General Fields
+	const eccentricity = 1 - (2 / ((apoapsis / periapsis) + 1));
+	const semimajoraxis = (apoapsis + periapsis) / 2;
+	const orbitalperiod = 2 * Math.PI * Math.sqrt((semimajoraxis ** 3) / body.mu);
+	const angularmomentumatperiapsis = Math.sqrt(2 * body.mu * apoapsis * periapsis / (apoapsis + periapsis));
+	document.getElementById('eccentricity').value = +eccentricity;
+	document.getElementById('semimajoraxis').value = +semimajoraxis;
+	document.getElementById('orbitalperiod').value = Math.trunc(orbitalperiod) + "s (" + window.secondsAsHumanTime(orbitalperiod) + ")";
+	document.getElementById('angularmomentumatperiapsis').value = Math.round(angularmomentumatperiapsis);
+
+	// Orbital Period Checker
+	const observedmu = 4 * (Math.PI ** 2) * (semimajoraxis ** 3) / (observedperiod ** 2);
+	document.getElementById('bodymu').value = body.mu;
+	document.getElementById('observedmu').value = +observedmu;
+
+	// Orbital Phasing
+	const phaseangle_rad = phaseangle_deg * Math.PI / 180;
+	const phaseeccentricanomaly = 2 * Math.atan( (1 - eccentricity) / (1 + eccentricity) * Math.tan(phaseangle_rad / 2));
+	const phasetimespam = orbitalperiod * (phaseeccentricanomaly - (eccentricity * Math.sin(phaseeccentricanomaly))) / (2 * Math.PI);
+	const phaseperiod = orbitalperiod - phasetimespam;
+	const phasesemimajor = (Math.sqrt(body.mu) * phaseperiod / (2 * Math.PI) ) ** (2/3);
+	const phaseapoapsis = (phasesemimajor * 2) - periapsis;
+	const phaseangularmomentum = Math.sqrt(2 * body.mu * phaseapoapsis * periapsis / (phaseapoapsis + periapsis));
+	const phaseDVentering = (phaseangularmomentum / periapsis) - (angularmomentumatperiapsis / periapsis);
+	const phaseDVleaving = (angularmomentumatperiapsis / periapsis) - (phaseangularmomentum / periapsis);
+	document.getElementById('phaseeccentricanomaly').value = phaseeccentricanomaly;
+	document.getElementById('phasetimespam').value = Math.trunc(phasetimespam) + "s (" + window.secondsAsHumanTime(phasetimespam) + ")";
+	document.getElementById('phaseperiod').value = Math.trunc(phaseperiod) + "s (" + window.secondsAsHumanTime(phaseperiod) + ")";
+	document.getElementById('phasesemimajor').value = Math.round(phasesemimajor);
+	document.getElementById('phaseapoapsis').value = Math.round(phaseapoapsis - body.equator_radius);
+	document.getElementById('phaseangularmomentum').value = Math.round(phaseangularmomentum);
+	document.getElementById('phase∆Ventering').value = Math.round(phaseDVentering);
+	document.getElementById('phase∆Vleaving').value = Math.round(phaseDVleaving);
+}
+
+
+document.getElementById('shipmass').onchange = function() {
+	window.updateReadOnlyFields();
+};
+document.getElementById('apoapsis').onchange = function() {
+	window.updateReadOnlyFields();
+};
+document.getElementById('periapsis').onchange = function() {
+	window.updateReadOnlyFields();
+};
+document.getElementById('observedperiod').onchange = function() {
+	window.updateReadOnlyFields();
+};
+document.getElementById('phaseangle_deg').onchange = function() {
+	window.updateReadOnlyFields();
+};
+</script>
+</body>
+</html>
